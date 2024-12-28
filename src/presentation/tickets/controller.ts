@@ -1,31 +1,37 @@
+import { TicketService } from "../services/ticket.service";
+
 export class TicketController {
-  constructor() {}
+  constructor(
+    private readonly ticketService = new TicketService(),
+  ) {}
 
   public getTickets = async (req: any, res: any) => {
-    res.json({ message: "GET /tickets" });
+    res.json(this.ticketService.tickets);
   };
 
   public getLastTicketNumber = async (req: any, res: any) => {
-    res.json({ message: "GET /lastTicketNumber" });
+    res.json(this.ticketService.lastTicketNumber);
   };
 
   public pendingTickets = async (req: any, res: any) => {
-    res.json({ message: "GET /pendingTickets" });
+    res.status(201).json(this.ticketService.pendingTickets);
   };
 
   public createTicket = async (req: any, res: any) => {
-    res.json({ message: "POST /tickets" });
+    res.json(this.ticketService.createTicket());
   };
 
   public drawTicket = async (req: any, res: any) => {
-    res.json({ message: "GET /drawTicket" });
+    const { desk } = req.params;
+    res.json(this.ticketService.drawTicket(desk));
   };
 
   public doneTicket = async (req: any, res: any) => {
-    res.json({ message: "PUT /doneTicket" });
+    const { ticketId } = req.params;
+    res.json(this.ticketService.doneTicket(ticketId));
   };
 
   public workingOnTickets = async (req: any, res: any) => {
-    res.json({ message: "GET /workingOnTickets" });
+    res.json(this.ticketService.lastWorkingOnTickets);
   };
 }
