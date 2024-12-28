@@ -1,8 +1,10 @@
-import { stat } from "fs";
 import { UuidAdapter } from "../../config/uuid.adapter";
 import { Ticket } from "../../domain/interfaces/ticket";
+import { WssService } from "./wss.service";
 
 export class TicketService {
+  constructor(private readonly wssService = WssService.instance) {}
+
   public readonly tickets: Ticket[] = [
     {
       id: UuidAdapter.v4(),
@@ -91,7 +93,8 @@ export class TicketService {
     };
 
     this.tickets.push(ticket);
-    //TODO: Implement a way to notify the ticket creation with ws
+
+    this.onTicketNumberChange();
 
     return ticket;
   }
@@ -104,7 +107,7 @@ export class TicketService {
     ticket.handleAtDesk = desk;
     ticket.handleAt = new Date();
 
-    this.workingOnTickets.unshift({...ticket});
+    this.workingOnTickets.unshift({ ...ticket });
 
     //TODO: Implement a way to notify the ticket draw with ws
 
@@ -116,7 +119,7 @@ export class TicketService {
 
   public doneTicket = (ticketId: string) => {
     const ticket = this.tickets.find((ticket) => ticket.id === ticketId);
-    if(!ticket) return { status: "error", message: "Ticket not found" };
+    if (!ticket) return { status: "error", message: "Ticket not found" };
 
     this.tickets.map((ticket) => {
       if (ticket.id === ticketId) {
@@ -126,6 +129,13 @@ export class TicketService {
       return ticket;
     });
 
-    return { status: "ok"};
+    return { status: "ok" };
+  };
+
+  private onTicketNumberChange() {
+    this.wssService.sendMessage(
+      "on-ticket-count-change",
+      this.pendingTickets.length
+    );
   }
 }
