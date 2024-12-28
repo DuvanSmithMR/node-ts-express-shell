@@ -48,7 +48,7 @@ export class TicketService {
 
     this.workingOnTickets.unshift({ ...ticket });
 
-    //TODO: Implement a way to notify the ticket draw with ws
+    this.onTicketNumberChange();
 
     return {
       status: "ok",
