@@ -48,6 +48,7 @@ export class TicketService {
 
     this.workingOnTickets.unshift({ ...ticket });
 
+    this.onWorkingChange();
     this.onTicketNumberChange();
 
     return {
@@ -76,5 +77,9 @@ export class TicketService {
       "on-ticket-count-change",
       this.pendingTickets.length
     );
+  }
+
+  private onWorkingChange() {
+    this.wssService.sendMessage("on-working-change", this.lastWorkingOnTickets);
   }
 }

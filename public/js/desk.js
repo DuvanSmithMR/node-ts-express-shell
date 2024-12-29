@@ -63,6 +63,8 @@ function connectToWebSockets() {
   socket.onmessage = (event) => {
     const { type, payload } = JSON.parse(event.data);
 
+    if (type !== "on-ticket-count-change") return;
+
     checkTicketCount(payload);
   };
 
