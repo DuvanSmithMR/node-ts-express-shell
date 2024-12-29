@@ -5,7 +5,7 @@ import { WssService } from "./wss.service";
 export class TicketService {
   constructor(private readonly wssService = WssService.instance) {}
 
-  public readonly tickets: Ticket[] = [];
+  public tickets: Ticket[] = [];
 
   private readonly workingOnTickets: Ticket[] = [];
 
@@ -16,7 +16,7 @@ export class TicketService {
   }
 
   public get lastWorkingOnTickets(): Ticket[] {
-    return this.workingOnTickets.splice(0, 4);
+    return this.workingOnTickets.slice(0, 4);
   }
 
   public get lastTicketNumber(): number {
@@ -60,7 +60,7 @@ export class TicketService {
     const ticket = this.tickets.find((ticket) => ticket.id === ticketId);
     if (!ticket) return { status: "error", message: "Ticket not found" };
 
-    this.tickets.map((ticket) => {
+    this.tickets = this.tickets.map((ticket) => {
       if (ticket.id === ticketId) {
         ticket.done = true;
       }
