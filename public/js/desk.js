@@ -4,6 +4,7 @@ const noMoreAlert = document.querySelector(".alert");
 const small = document.querySelector("small");
 
 const btnDraw = document.querySelector("#btn-draw");
+const btnStop = document.querySelector("#btn-stop");
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -29,6 +30,8 @@ async function loadInitialCount() {
 }
 
 async function getTicket() {
+  doneTicket();
+
   const { status, ticket, message } = await fetch(
     `api/tickets/draw/${deskNumber}`
   ).then((res) => res.json());
@@ -37,6 +40,21 @@ async function getTicket() {
 
   workingTicket = ticket;
   small.innerText = ticket.number;
+}
+
+async function doneTicket() {
+  if (!workingTicket) return;
+  const { status, message } = await fetch(
+    `api/tickets/done/${workingTicket.id}`,
+    {
+      method: "PUT",
+    }
+  ).then((res) => res.json());
+
+  if (status === "ok") {
+    small.innerText = "....";
+    workingTicket = null;
+  }
 }
 
 function connectToWebSockets() {
@@ -62,6 +80,7 @@ function connectToWebSockets() {
 }
 
 btnDraw.addEventListener("click", getTicket);
+btnStop.addEventListener("click", doneTicket);
 
 connectToWebSockets();
 loadInitialCount();
